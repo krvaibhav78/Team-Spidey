@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Spidey | The Amazing Hexapod</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --spidey-red: #E23636;
+            --spidey-blue: #01388D;
+            --spidey-black: #121212;
+            --comic-white: #F9F9F9;
+            --comic-shadow: 6px 6px 0px var(--spidey-black);
+            --panel-border: 3px solid var(--spidey-black);
+        }
+
+        * {
+            box-sizing: border-box;
+            cursor: none; /* Hide default cursor */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            /* Comic Book Halftone Pattern Background */
+            background-image: radial-gradient(var(--spidey-blue) 1px, transparent 1px);
+            background-size: 20px 20px;
+            font-family: 'Roboto', sans-serif;
+            color: var(--spidey-black);
+            overflow-x: hidden;
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--spidey-red);
+            background-color: rgba(226, 54, 54, 0.3);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+        }
+        .cursor::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 4px; height: 4px;
+            background: var(--spidey-red);
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        /* --- HANGING SPIDER ANIMATION --- */
+        .spider-container {
+            position: fixed;
+            top: -20px;
+            right: 100px;
+            z-index: 2000;
+            animation: swing 3s ease-in-out infinite alternate;
+            transform-origin: top center;
+        }
+
+        .spider-thread {
+            width: 2px;
+            height: 200px;
+            background-color: var(--spidey-black);
+            margin: 0 auto;
+        }
+
+        .spider-body {
+            width: 60px;
+            height: 60px;
+            background: var(--spidey-red);
+            border: 3px solid var(--spidey-black);
+            border-radius: 50%;
+            position: relative;
+            margin-top: -5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Spider Eyes */
+        .spider-body::before, .spider-body::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            width: 15px; height: 20px;
+            background: white;
+            border: 2px solid black;
+            border-radius: 50% 50% 40% 40%;
+        }
+        .spider-body::before { left: 12px; transform: rotate(-10deg); }
+        .spider-body::after { right: 12px; transform: rotate(10deg); }
+
+        /* Spider Legs (CSS Art) */
+        .legs {
+            position: absolute;
+            width: 100%; height: 100%;
+            pointer-events: none;
+        }
+        .leg {
+            position: absolute;
+            width: 30px; height: 15px;
+            border-top: 3px solid black;
+            border-right: 3px solid black;
+            border-radius: 0 20px 0 0;
+            top: 20px;
+        }
+        .leg.left { left: -25px; transform: scaleX(-1) rotate(20deg); }
+        .leg.right { right: -25px; transform: rotate(20deg); }
+        
+        @keyframes swing {
+            0% { transform: rotate(5deg); }
+            100% { transform: rotate(-5deg); }
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: var(--spidey-red);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--spidey-black);
+            position: relative;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-family: 'Bangers', cursive;
+            font-size: 5rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 5px 5px 0px var(--spidey-black); /* Hard Comic Shadow */
+            margin: 0;
+        }
+
+        .subtitle {
+            background-color: white;
+            color: var(--spidey-black);
+            display: inline-block;
+            padding: 10px 30px;
+            font-family: 'Bangers', cursive;
+            font-size: 1.5rem;
+            border: 3px solid var(--spidey-black);
+            box-shadow: 5px 5px 0 var(--spidey-black);
+            margin-top: 20px;
+            transform: rotate(-2deg);
+        }
+
+        /* --- NAV --- */
+        nav {
+            background: var(--spidey-blue);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 3px solid black;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-family: 'Bangers', cursive;
+            font-size: 1.5rem;
+            margin: 0 20px;
+            text-shadow: 2px 2px 0 black;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        nav a:hover {
+            transform: scale(1.1) rotate(2deg);
+            color: #FFDE00; /* Yellow Pop */
+        }
+
+        /* --- LAYOUT --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .section-title {
+            font-family: 'Bangers', cursive;
+            font-size: 3rem;
+            color: var(--spidey-blue);
+            text-shadow: 3px 3px 0 var(--comic-white), 5px 5px 0 var(--spidey-black);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: '🕸';
+            margin-right: 15px;
+            font-size: 2.5rem;
+        }
+
+        /* --- TEAM CARDS (COMIC PANELS) --- */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .comic-card {
+            background: white;
+            border: var(--panel-border);
+            box-shadow: var(--comic-shadow);
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .comic-card:hover {
+            transform: translate(-5px, -5px);
+            box-shadow: 10px 10px 0 var(--spidey-black);
+        }
+
+        /* Speech Bubble for Role */
+        .role-badge {
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            background: #FFDE00; /* Comic Yellow */
+            border: 2px solid black;
+            padding: 5px 15px;
+            font-family: 'Bangers';
+            font-size: 1.2rem;
+            transform: rotate(3deg);
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+        }
+
+        .profile-pic-area {
+            height: 200px;
+            background-color: #eee;
+            border: 2px solid black;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .profile-pic-area img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        .member-name {
+            font-family: 'Bangers';
+            font-size: 2rem;
+            margin-bottom: 5px;
+            color: var(--spidey-red);
+        }
+
+        .member-details {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        /* --- PARTS TABLE (Daily Bugle Style) --- */
+        .paper-sheet {
+            background: white;
+            border: var(--panel-border);
+            padding: 20px;
+            box-shadow: var(--comic-shadow);
+            position: relative;
+        }
+        
+        .paper-sheet::before {
+            content: "TOP SECRET // OSCORP TECH";
+            position: absolute;
+            top: -15px; left: 20px;
+            background: var(--spidey-red);
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            border: 2px solid black;
+            font-family: 'Bangers';
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            background-color: var(--spidey-black);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-family: 'Bangers';
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 2px solid #ddd;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) { background-color: #f9f9f9; }
+
+        .buy-btn {
+            background-color: var(--spidey-blue);
+            color: white;
+            text-decoration: none;
+            padding: 5px 15px;
+            border: 2px solid black;
+            font-family: 'Bangers';
+            display: inline-block;
+            transition: 0.2s;
+            box-shadow: 2px 2px 0 black;
+        }
+        
+        .buy-btn:hover {
+            background-color: var(--spidey-red);
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0 black;
+        }
+
+        /* --- CODE BLOCK --- */
+        .code-container {
+            background: #282c34;
+            border: var(--panel-border);
+            box-shadow: var(--comic-shadow);
+            padding: 20px;
+            color: white;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+
+        .code-title {
+            color: #FFDE00;
+            font-family: 'Bangers';
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #555;
+            padding-bottom: 10px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--spidey-black);
+            color: white;
+            text-align: center;
+            padding: 40px;
+            margin-top: 60px;
+            font-family: 'Bangers';
+            font-size: 1.2rem;
+            border-top: 5px solid var(--spidey-red);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 3.5rem; }
+            .spider-container { display: none; } /* Hide animation on mobile */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+
+    <div class="spider-container">
+        <div class="spider-thread"></div>
+        <div class="spider-body">
+            <div class="legs">
+                <div class="leg left" style="top: 10px;"></div>
+                <div class="leg right" style="top: 10px;"></div>
+                <div class="leg left" style="top: 25px;"></div>
+                <div class="leg right" style="top: 25px;"></div>
+                <div class="leg left" style="top: 40px;"></div>
+                <div class="leg right" style="top: 40px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <h1>TEAM SPIDEY</h1>
+        <div class="subtitle">THE AMAZING HEXAPOD PROJECT</div>
+    </header>
+
+    <nav>
+        <a href="#team">THE HEROES</a>
+        <a href="#project">BLUEPRINT</a>
+        <a href="#parts">GADGETS</a>
+        <a href="#code">WEB LOGIC</a>
+    </nav>
+
+    <div class="container">
+        
+        <section id="team">
+            <h2 class="section-title">MEET THE SQUAD</h2>
+            <div class="team-grid">
+                
+                <div class="comic-card">
+                    <div class="role-badge">The Architect</div>
+                    <div class="profile-pic-area">
+                        <img src="https://via.placeholder.com/300x200?text=KUMAR" alt="Kumar">
+                    </div>
+                    <div class="member-name">Kumar Vaibhav</div>
+                    <div class="member-details">
+                        <p><strong>Power:</strong> Architecture & Software Design</p>
+                        <p><strong>HQ:</strong> Computer Science Dept</p>
+                        <p><strong>Comms:</strong> +91 98765 43210</p>
+                    </div>
+                </div>
+
+                <div class="comic-card">
+                    <div class="role-badge">Tech Wizard</div>
+                    <div class="profile-pic-area">
+                        <img src="https://via.placeholder.com/300x200?text=VIPUL" alt="Vipul">
+                    </div>
+                    <div class="member-name">Vipul Kumar Sharma</div>
+                    <div class="member-details">
+                        <p><strong>Power:</strong> Hardware Assembly & Embedded Systems</p>
+                        <p><strong>HQ:</strong> Electronics Dept</p>
+                        <p><strong>Comms:</strong> +91 98765 43211</p>
+                    </div>
+                </div>
+
+                <div class="comic-card">
+                    <div class="role-badge">The Brains</div>
+                    <div class="profile-pic-area">
+                        <img src="https://via.placeholder.com/300x200?text=ANIKET" alt="Aniket">
+                    </div>
+                    <div class="member-name">Aniket Raj</div>
+                    <div class="member-details">
+                        <p><strong>Power:</strong> Critical Thinking & Management</p>
+                        <p><strong>HQ:</strong> Management Dept</p>
+                        <p><strong>Comms:</strong> +91 98765 43212</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="project">
+            <h2 class="section-title">THE MASTER PLAN</h2>
+            <div class="paper-sheet">
+                <h3>System Architecture: Hexapod MK-1</h3>
+                <p>Designed in Fusion 360, this bio-inspired robot mimics the movement of a spider using 18 high-torque servos. The chassis is 3D printed using PLA+ for maximum durability.</p>
+                <br>
+                <div style="background:#eee; height:300px; border:2px dashed black; display:flex; align-items:center; justify-content:center; color:#888;">
+                    [INSERT CAD MODEL IMAGE HERE]
+                </div>
+            </div>
+        </section>
+
+        <section id="parts">
+            <h2 class="section-title">GADGET INVENTORY</h2>
+            <div class="paper-sheet">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Gear Name</th>
+                            <th>Qty</th>
+                            <th>Cost (₹)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>ESP-32 WROOM 32 U</td><td>3</td><td>1017.03</td><td><a href="#" class="buy-btn">GET IT!</a></td></tr>
+                        <tr><td>2</td><td>775 Motor 10000rpm</td><td>2</td><td>850.0</td><td><a href="#" class="buy-btn">GET IT!</a></td></tr>
+                        <tr><td>3</td><td>DC Switch (Rocker)</td><td>5</td><td>645.0</td><td><a href="#" class="buy-btn">GET IT!</a></td></tr>
+                        <tr><td>4</td><td>Jumper Wires</td><td>2</td><td>364.0</td><td><a href="#" class="buy-btn">GET IT!</a></td></tr>
+                        <tr><td>5</td><td>LM 2596 Buck Converter</td><td>2</td><td>10716.0</td><td><a href="#" class="buy-btn">GET IT!</a></td></tr>
+                        <tr><td>6</td><td>XT-60 Female Connector</td><td>5</td><td>200.0</td><td><a href="#" class="buy-btn">GET IT!</a></td></tr>
+                        <tr><td>7</td><td>LiPo Battery 7.4V 5000mAh</td><td>4</td><td>20268.0</td><td><a href="#" class="buy-btn">GET IT!</a></td></tr>
+                        <tr><td>9</td><td>Gyro Sensor (MPU6050)</td><td>2</td><td>922.0</td><td><a href="#" class="buy-btn">GET IT!</a></td></tr>
+                        <tr><td>10</td><td>DC 30A Converter</td><td>1</td><td>7199.0</td><td><a href="#" class="buy-btn">GET IT!</a></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="code">
+            <h2 class="section-title">WEB SHOOTER LOGIC</h2>
+            <div class="code-container">
+                <div class="code-title">Arduino IDE // Main Controller.ino</div>
+<pre>
+#include &lt;Wire.h&gt;
+#include &lt;Adafruit_PWMServoDriver.h&gt;
+
+// Initializing Spider Systems...
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+
+void setup() {
+  Serial.begin(9600);
+  pwm.begin();
+  pwm.setPWMFreq(60); 
+  
+  Serial.println("THWIP! System Online.");
+}
+
+void loop() {
+  // Move leg 1 forward
+  pwm.setPWM(0, 0, 450);
+  delay(500);
+}
+</pre>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>WITH GREAT POWER COMES GREAT RESPONSIVENESS.</p>
+        <p>&copy; 2024 TEAM SPIDEY</p>
+    </footer>
+
+    <script>
+        // Custom Cursor Logic
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Hover effect for cursor
+        document.querySelectorAll('a, .comic-card').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                cursor.style.width = '40px';
+                cursor.style.height = '40px';
+                cursor.style.backgroundColor = 'rgba(1, 56, 141, 0.3)'; // Blue tint
+                cursor.style.borderColor = 'var(--spidey-blue)';
+            });
+            item.addEventListener('mouseleave', () => {
+                cursor.style.width = '20px';
+                cursor.style.height = '20px';
+                cursor.style.backgroundColor = 'rgba(226, 54, 54, 0.3)'; // Back to Red
+                cursor.style.borderColor = 'var(--spidey-red)';
+            });
+        });
+    </script>
+</body>
+</html>
